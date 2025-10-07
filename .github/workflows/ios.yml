@@ -14,7 +14,7 @@ jobs:
     env:
       XCODE_SCHEME: CounterApp
       XCODE_PLATFORM: "iOS Simulator"
-      XCODE_DEVICE: "iPhone 16 Pro"     
+      XCODE_DEVICE: "iPhone 15 Pro"     
 
     steps:
       - name: Checkout
