@@ -211,6 +211,7 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				137E8D412E9590C10017FE9D /* XCRemoteSwiftPackageReference "swift-composable-architecture" */,
+				137E8D602E95A4BB0017FE9D /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 137E8D0E2E958F660017FE9D /* Products */;
@@ -616,6 +617,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 1.22.3;
+			};
+		};
+		137E8D602E95A4BB0017FE9D /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.61.0;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
