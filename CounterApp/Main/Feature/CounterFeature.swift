@@ -5,11 +5,13 @@
 //  Created by Zaki Menzhanov on 07.10.2025.
 //
 
-import ComposableArchitecture
 import Foundation
+import ComposableArchitecture
 
 @Reducer
 struct CounterFeature {
+    
+    @Dependency(\.catFact) var catFact
     
     @ObservableState
     struct State: Equatable {
@@ -37,9 +39,8 @@ struct CounterFeature {
                 
             case .numberFactButtonTapped:
                 return .run { send in
-                    let (data, _) = try await URLSession.shared.data(from: URL(string: "https://catfact.ninja/fact")!)
-                    let factModel = try JSONDecoder().decode(FactModel.self, from: data)
-                    await send(.numberFactButtonResponse(factModel.fact))
+                    let fact = try await catFact.fetch()
+                    await send(.numberFactButtonResponse(fact))
                 }
                 
             case let .numberFactButtonResponse(fact):
@@ -47,5 +48,28 @@ struct CounterFeature {
                 return .none
             }
         }
+    }
+}
+
+struct CatFactClient {
+    var fetch: () async throws -> String
+}
+
+extension CatFactClient: DependencyKey {
+    static var liveValue: CatFactClient {
+        Self(
+            fetch: {
+                let (data, _) = try await URLSession.shared.data(from: URL(string: "https://catfact.ninja/fact")!)
+                let factModel = try JSONDecoder().decode(FactModel.self, from: data)
+                return factModel.fact
+            }
+        )
+    }
+}
+
+extension DependencyValues {
+    var catFact: CatFactClient {
+        get { self[CatFactClient.self] }
+        set { self[CatFactClient.self] = newValue }
     }
 }

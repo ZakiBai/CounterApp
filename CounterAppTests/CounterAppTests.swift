@@ -6,11 +6,43 @@
 //
 
 import Testing
+import ComposableArchitecture
+import XCTest
 
-struct CounterAppTests {
+@testable import CounterApp
 
-    @Test func example() async throws {
-        // Write your test here and use APIs like `#expect(...)` to check expected conditions.
+@MainActor
+final class CounterAppTests: XCTestCase {
+
+    func test_basics() async {
+        let store = TestStore(
+            initialState: CounterFeature.State()
+        ) {
+            CounterFeature()
+        }
+        
+        await store.send(.incrementButtonTapped) {
+            $0.count = 1
+        }
+        
+        await store.send(.decrementButtonTapped) {
+            $0.count = 0
+        }
+    }
+    
+    func test_factButtonTapped() async {
+        let store = TestStore(
+            initialState: CounterFeature.State()
+        ) {
+            CounterFeature()
+        } withDependencies: {
+            $0.catFact.fetch = { "Hi Kitty" }
+        }
+        
+        await store.send(.numberFactButtonTapped)
+        await store.receive(.numberFactButtonResponse("Hi Kitty")) {
+            $0.numberFact = "Hi Kitty"
+        }
     }
 
 }
