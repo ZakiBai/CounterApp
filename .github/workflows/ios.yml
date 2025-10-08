@@ -26,14 +26,22 @@ jobs:
 
       - name: Build and Test
         run: |
-          # Определяем workspace или project автоматически
-          if ls *.xcworkspace 1> /dev/null 2>&1; then
+         # Ищем workspace
+          file_to_build=$(find . -name "*.xcworkspace" | head -n1)
+          if [ -n "$file_to_build" ]; then
             filetype_parameter="workspace"
-            file_to_build=$(find -name "*.xcworkspace" | head -n1)
           else
-            filetype_parameter="project"
-            file_to_build=$(find -name "*.xcodeproj" | head -n1)
+            # Ищем project
+            file_to_build=$(find . -name "*.xcodeproj" | head -n1)
+            if [ -n "$file_to_build" ]; then
+              filetype_parameter="project"
+            else
+              echo "Error: No .xcworkspace or .xcodeproj found!"
+              exit 1
+            fi
           fi
+
+          echo "Building $file_to_build of type $filetype_parameter"
 
           # Берём первый доступный iPhone Simulator
           device=$(xcrun simctl list devices available | grep -o "iPhone .* (.*) (Booted\|Shutdown)" | head -n1 | awk -F '(' '{print $1}' | sed 's/ *$//')
