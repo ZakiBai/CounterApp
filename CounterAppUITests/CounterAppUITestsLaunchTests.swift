@@ -6,7 +6,7 @@
 //
 
 import XCTest
-
+// swiftlint: disable all
 final class CounterAppUITestsLaunchTests: XCTestCase {
 
     override class var runsForEachTargetApplicationUIConfiguration: Bool {
@@ -31,3 +31,4 @@ final class CounterAppUITestsLaunchTests: XCTestCase {
         add(attachment)
     }
 }
+// swiftlint: enable all
