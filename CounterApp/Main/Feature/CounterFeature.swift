@@ -23,7 +23,9 @@ struct CounterFeature {
         case decrementButtonTapped
         case incrementButtonTapped
         case numberFactButtonTapped
-        case numberFactButtonResponse(String)
+        
+        
+        case numberFactButtonResponse(String  )
     }
     
     var body: some Reducer<State, Action> {
