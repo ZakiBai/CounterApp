@@ -29,10 +29,10 @@ jobs:
           # Определяем workspace или project автоматически
           if ls *.xcworkspace 1> /dev/null 2>&1; then
             filetype_parameter="workspace"
-            file_to_build=$(find -name *.xcworkspace | head -n1)
+            file_to_build=$(find -name "*.xcworkspace" | head -n1)
           else
             filetype_parameter="project"
-            file_to_build=$(find -name *.xcodeproj | head -n1)
+            file_to_build=$(find -name "*.xcodeproj" | head -n1)
           fi
 
           # Берём первый доступный iPhone Simulator
