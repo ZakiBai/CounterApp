@@ -22,6 +22,8 @@ jobs:
           default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
           echo $default | cat >default
           echo Using default scheme: $default
+      - name: Clean DerivedData
+        run: rm -rf ~/Library/Developer/Xcode/DerivedData/*
       - name: Build
         env:
           scheme: ${{ 'default' }}
@@ -39,7 +41,7 @@ jobs:
           xcodebuild build-for-testing \
             -scheme "$scheme" \
             -"$filetype_parameter" "$file_to_build" \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.1,arch=x86_64"
       - name: Test
         env:
           scheme: ${{ 'default' }}
@@ -57,4 +59,4 @@ jobs:
           xcodebuild build-for-testing \
             -scheme "$scheme" \
             -"$filetype_parameter" "$file_to_build" \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.1,arch=x86_64"
