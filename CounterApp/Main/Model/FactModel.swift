@@ -7,5 +7,5 @@
 
 struct FactModel: Decodable, Equatable {
     let fact: String
-    let length: Int 
+    let length: Int
 }

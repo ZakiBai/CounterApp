@@ -268,7 +268,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "SWIFTLINT_PATH=\"/opt/homebrew/bin/swiftlint\"\n\nif [ -f \"$SWIFTLINT_PATH\" ]; then\n    \"$SWIFTLINT_PATH\" lint --config \"${SRCROOT}/.swiftlint.yml\" --reporter xcode || true\nelse\n    echo \"⚠️ SwiftLint not found at $SWIFTLINT_PATH. Skipping lint.\"\nfi\n";
+			shellScript = "SWIFTLINT_PATH=\"/opt/homebrew/bin/swiftlint\"\n\nif [ \"$SKIP_LINT\" == \"true\" ]; then\n  echo \"⏭ Skipping SwiftLint because SKIP_LINT is true\"\n  exit 0\nfi\n\nif [ -f \"$SWIFTLINT_PATH\" ]; then\n    \"$SWIFTLINT_PATH\" lint --config \"${SRCROOT}/.swiftlint.yml\" --reporter xcode || true\nelse\n    echo \"⚠️ SwiftLint not found at $SWIFTLINT_PATH. Skipping lint.\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

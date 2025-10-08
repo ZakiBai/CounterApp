@@ -20,7 +20,8 @@ jobs:
   test:
     needs: [lint]
     runs-on: self-hosted
-
+    env:
+      SKIP_LINT: true
     steps:
       - uses: actions/checkout@v4
 
