@@ -28,6 +28,8 @@ jobs:
         env:
           scheme: ${{ 'default' }}
         run: |
+          DERIVED_DATA_PATH=~/CounterAppDerivedData
+          mkdir -p "$DERIVED_DATA_PATH"
           if [ $scheme = default ]; then scheme=$(cat default); fi
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then
             filetype_parameter="workspace"
@@ -42,10 +44,12 @@ jobs:
             -scheme "$scheme" \
             -"$filetype_parameter" "$file_to_build" \
             -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
+            -derivedDataPath "$DERIVED_DATA_PATH"
       - name: Test
         env:
           scheme: ${{ 'default' }}
         run: |
+          DERIVED_DATA_PATH=~/CounterAppDerivedData
           if [ $scheme = default ]; then scheme=$(cat default); fi
           if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then
             filetype_parameter="workspace"
@@ -56,7 +60,8 @@ jobs:
           fi
           file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
 
-          xcodebuild build-for-testing \
+          xcodebuild test \
             -scheme "$scheme" \
             -"$filetype_parameter" "$file_to_build" \
             -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
+            -derivedDataPath "$DERIVED_DATA_PATH"
