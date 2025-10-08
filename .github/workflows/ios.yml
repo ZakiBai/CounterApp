@@ -43,17 +43,9 @@ jobs:
 
           echo "Building $file_to_build of type $filetype_parameter"
 
-          # Берём первый iPhone симулятор (Booted или Shutdown)
-          device_info=$(xcrun simctl list devices available | grep -m1 -E 'iPhone.*(Shutdown|Booted)')
-
-          # Проверяем, что нашли симулятор
-          if [ -z "$device_info" ]; then
-            echo "Error: No available iPhone simulator found!"
-            exit 1
-          fi
 
           # Имя устройства (до первой скобки)
-          device=$(echo "$device_info" | sed -E 's/^(iPhone [^(]+).*/\1/')
+          device="iPhone 16 Pro"
 
           # OS для этого устройства (числа внутри скобок)
           os_version="18.3.1"
