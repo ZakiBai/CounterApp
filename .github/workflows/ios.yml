@@ -43,14 +43,16 @@ jobs:
 
           echo "Building $file_to_build of type $filetype_parameter"
 
-          # Берём первый доступный iPhone Simulator
-          device=$(xcrun simctl list devices available | grep -o "iPhone .* (.*) (Booted\|Shutdown)" | head -n1 | awk -F '(' '{print $1}' | sed 's/ *$//')
+          # Берём первый доступный iPhone Simulator (Booted или Shutdown)
+          device_info=$(xcrun simctl list devices available | grep -E 'iPhone .* \(Booted\|Shutdown\)' | head -n1)
 
-          # Берём последнюю версию iOS для этого устройства
-          os_version=$(xcrun simctl list runtimes | grep -o "iOS .*" | head -n1 | awk '{print $2}')
+          # Извлекаем имя устройства
+          device=$(echo "$device_info" | awk -F '(' '{print $1}' | sed 's/ *$//')
 
-          echo "Building scheme: ${{ steps.scheme.outputs.scheme }}"
-          echo "Device: $device, OS: $os_version"
+          # Извлекаем OS для этого устройства
+          os_version=$(echo "$device_info" | grep -o 'OS [0-9\.]*' | awk '{print $2}')
+
+          echo "Using device: $device, OS: $os_version"
 
           # Build
           xcodebuild build-for-testing \
