@@ -27,11 +27,5 @@ It demonstrates how to structure features, manage state, handle side effects, an
 
 ### Prerequisites
 - Xcode 16 or later
-- iOS 17+ deployment target
+- iOS 18+ deployment target
 - Swift 5.9+
-
-### Installation
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/your-username/CounterApp.git
-   cd CounterApp
