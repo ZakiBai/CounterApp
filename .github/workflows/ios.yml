@@ -41,7 +41,7 @@ jobs:
           xcodebuild build-for-testing \
             -scheme "$scheme" \
             -"$filetype_parameter" "$file_to_build" \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2,arch=x86_64"
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
       - name: Test
         env:
           scheme: ${{ 'default' }}
@@ -59,4 +59,4 @@ jobs:
           xcodebuild build-for-testing \
             -scheme "$scheme" \
             -"$filetype_parameter" "$file_to_build" \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2,arch=x86_64"
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
