@@ -56,8 +56,7 @@ jobs:
           device=$(echo "$device_info" | sed -E 's/^(iPhone [^(]+).*/\1/')
 
           # OS для этого устройства (числа внутри скобок)
-          simulator_id=$(echo "$device_info" | grep -oE '[A-F0-9-]{36}')
-          os_version=$(xcrun simctl list devices | grep "$simulator_id" | grep -oE 'OS [0-9.]+' | awk '{print $2}')
+          os_version="18.3.1"
 
           echo "Using device: $device, OS: $os_version"
 
