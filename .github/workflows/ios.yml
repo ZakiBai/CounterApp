@@ -1,67 +1,57 @@
-name: iOS starter workflow
+name: iOS CI
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [main]
   pull_request:
-    branches: [ "main" ]
+    branches: [main]
 
 jobs:
   build:
-    name: Build and Test default scheme using any available iPhone simulator
-    runs-on: macos-14
+    runs-on: self-hosted
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
+
       - name: Select Xcode 16
         run: sudo xcode-select -s /Applications/Xcode_16.1.app
-      - name: Set Default Scheme
+
+      - name: Set default scheme automatically
+        id: scheme
         run: |
           scheme_list=$(xcodebuild -list -json | tr -d "\n")
-          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['targets'][0]")
-          echo $default | cat >default
-          echo Using default scheme: $default
-      - name: Clean DerivedData
-        run: rm -rf ~/Library/Developer/Xcode/DerivedData/*
-      - name: Build
-        env:
-          scheme: ${{ 'default' }}
+          default=$(echo $scheme_list | ruby -e "require 'json'; puts JSON.parse(STDIN.gets)['project']['schemes'][0]")
+          echo "scheme=$default" >> $GITHUB_OUTPUT
+          echo "Using default scheme: $default"
+
+      - name: Build and Test
         run: |
-          DERIVED_DATA_PATH=~/CounterAppDerivedData
-          mkdir -p "$DERIVED_DATA_PATH"
-          if [ $scheme = default ]; then scheme=$(cat default); fi
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then
+          # Определяем workspace или project автоматически
+          if ls *.xcworkspace 1> /dev/null 2>&1; then
             filetype_parameter="workspace"
-            file_to_build="`ls -A | grep -i \\.xcworkspace\$`"
+            file_to_build=$(ls *.xcworkspace | head -n1)
           else
             filetype_parameter="project"
-            file_to_build="`ls -A | grep -i \\.xcodeproj\$`"
+            file_to_build=$(ls *.xcodeproj | head -n1)
           fi
-          file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
 
+          # Берём первый доступный iPhone Simulator
+          device=$(xcrun simctl list devices available | grep -o "iPhone .* (.*) (Booted\|Shutdown)" | head -n1 | awk -F '(' '{print $1}' | sed 's/ *$//')
+
+          # Берём последнюю версию iOS для этого устройства
+          os_version=$(xcrun simctl list runtimes | grep -o "iOS .*" | head -n1 | awk '{print $2}')
+
+          echo "Building scheme: ${{ steps.scheme.outputs.scheme }}"
+          echo "Device: $device, OS: $os_version"
+
+          # Build
           xcodebuild build-for-testing \
-            -scheme "$scheme" \
+            -scheme "${{ steps.scheme.outputs.scheme }}" \
             -"$filetype_parameter" "$file_to_build" \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
-            -derivedDataPath "$DERIVED_DATA_PATH"
-      - name: Test
-        env:
-          scheme: ${{ 'default' }}
-        run: |
-          DERIVED_DATA_PATH=~/CounterAppDerivedData
-          if [ $scheme = default ]; then scheme=$(cat default); fi
-          if [ "`ls -A | grep -i \\.xcworkspace\$`" ]; then
-            filetype_parameter="workspace"
-            file_to_build="`ls -A | grep -i \\.xcworkspace\$`"
-          else
-            filetype_parameter="project"
-            file_to_build="`ls -A | grep -i \\.xcodeproj\$`"
-          fi
-          file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
+            -destination "platform=iOS Simulator,name=$device,OS=$os_version"
 
+          # Test
           xcodebuild test \
-            -scheme "$scheme" \
+            -scheme "${{ steps.scheme.outputs.scheme }}" \
             -"$filetype_parameter" "$file_to_build" \
-            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
-            -derivedDataPath "$DERIVED_DATA_PATH"
+            -destination "platform=iOS Simulator,name=$device,OS=$os_version"
