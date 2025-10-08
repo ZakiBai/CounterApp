@@ -36,13 +36,10 @@ jobs:
           fi
           file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
 
-          device=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F'[()]' '{print $2}')
-          echo "Using simulator with id=$device"
-
           xcodebuild build-for-testing \
             -scheme "$scheme" \
             -"$filetype_parameter" "$file_to_build" \
-            -destination "platform=iOS Simulator,id=$device"
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
       - name: Test
         env:
           scheme: ${{ 'default' }}
@@ -57,10 +54,7 @@ jobs:
           fi
           file_to_build=$(echo $file_to_build | awk '{$1=$1;print}')
 
-          device=$(xcrun simctl list devices available | grep "iPhone" | head -1 | awk -F'[()]' '{print $2}')
-          echo "Using simulator with id=$device"
-
           xcodebuild build-for-testing \
             -scheme "$scheme" \
             -"$filetype_parameter" "$file_to_build" \
-            -destination "platform=iOS Simulator,id=$device"
+            -destination "platform=iOS Simulator,name=iPhone 16,OS=18.2"
