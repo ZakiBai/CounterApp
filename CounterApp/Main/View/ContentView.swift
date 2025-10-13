@@ -20,10 +20,17 @@ struct ContentView: View {
             }
 
             Section {
+                Button(
+                    store.isTimerRunning ?
+                    "Stop timer" :
+                        "Start timer"
+                ) { store.send(.toggleButtonTimerTapped)}
                 Button("Number fact") { store.send(.numberFactButtonTapped) }
             }
 
-            if let fact = store.numberFact {
+            if store.isLoading {
+                ProgressView()
+            } else if let fact = store.numberFact {
                 Text(fact)
             }
         }
